@@ -1,0 +1,9 @@
+# This is only to save time
+apt-get update
+apt-get install -y apache2
+rm -f /var/www/index.html
+touch /var/www/index.html
+docker pull quay.io/letsencrypt/letsencrypt:latest
+
+mkdir /root/ssl-keys
+echo "email = vlemp@vuksan.com" > /root/ssl-keys/cli.ini
