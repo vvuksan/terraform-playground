@@ -25,5 +25,5 @@ variable "gce_region1_zone2" {
 
 variable "gce_image" {
   description   = "OS image to boot VMs using"
-  default       = "ubuntu-1404-trusty-v20160406"
+  default       = "ubuntu-1604-xenial-v20160420c"
 }

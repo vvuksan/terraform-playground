@@ -1,7 +1,7 @@
 #!/bin/bash
 apt-get update
-apt-get install -y apache2 libapache2-mod-php5 php5-curl mtr-tiny
-a2enmod php5
+apt-get install -y apache2 libapache2-mod-php7.0 php7.0-curl mtr-tiny
+a2enmod php7.0
 cd /var/www/html
 wget https://github.com/vvuksan/fantomTest/archive/v1.0.tar.gz
 tar zxf v1.0.tar.gz
