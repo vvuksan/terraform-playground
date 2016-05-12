@@ -1,0 +1,52 @@
+#!/bin/bash
+
+MINECRAFT_VERSION="1.9.2"
+
+# Where to download the mine
+MINECRAFT_URL="https://s3.amazonaws.com/Minecraft.Download/versions/$MINECRAFT_VERSION/minecraft_server.$MINECRAFT_VERSION.jar"
+
+export PATH=$PATH:/usr/bin
+
+# 
+DISK="/dev/disk/by-id/google-data-permdisk"
+BASE_DIR="/minecraft"
+
+RUN_DIR="$BASE_DIR/minecraft_server_1"
+
+# Make sure mount point exists
+install -d $BASE_DIR
+
+/usr/share/google/safe_format_and_mount $DISK $BASE_DIR
+
+# Let's create the directory where to install the minecraft server
+install -o nobody -d $RUN_DIR
+
+if [ ! -f $RUN_DIR/minecraft_server_$MINECRAFT_VERSION.jar ]; then
+
+   wget -O $RUN_DIR/minecraft_server_$MINECRAFT_VERSION.jar $MINECRAFT_URL
+
+   echo "eula=true" > $RUN_DIR/eula.txt
+
+fi
+
+apt-get update
+apt-get install -y openjdk-8-jre-headless supervisor
+
+cat > /etc/supervisor/conf.d/minecraft.conf <<ENDOF
+[program:minecraft]
+user=nobody
+directory=$RUN_DIR
+command=/usr/bin/java -Xmx1536M -Xms1536M -jar $RUN_DIR/minecraft_server_$MINECRAFT_VERSION.jar
+autostart=true
+autorestart=true
+umask=002
+priority=2
+startretries=3
+stopwaitsecs=10
+stdout_logfile=$RUN_DIR/minecraft.log
+stdout_logfile_maxbytes=0
+stderr_logfile=$RUN_DIR/minecraft_errors.log
+stderr_logfile_maxbytes=0
+ENDOF
+
+service supervisor restart
